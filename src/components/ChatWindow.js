@@ -13,9 +13,10 @@ import MicIcon from '@material-ui/icons/Mic';
 export default () => {
 
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [text, setText] = useState();
 
-  const handleEmojiClick = () => {
-
+  const handleEmojiClick = (e, emojiObject) => {
+    setText(text + emojiObject.emoji);    
   }  
   const handleOpenEmoji = () => {
     setEmojiOpen(true);
@@ -83,6 +84,8 @@ export default () => {
             type="text" 
             className="chat-window-footer-input-input" 
             placeholder="Digite uma mensagem"
+            value={text}
+            onChange={e=>setText(e.target.value)}
           />
         </div>
 
