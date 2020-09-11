@@ -7,6 +7,9 @@
 .chat-list-item:hover{
   background-color: #f5f5f5;
 }
+.chat-list-item.active{
+  background-color: #ebebeb;
+}
 .chat-list-item-avatar{
   height: 50px;
   width: 50px;
@@ -52,5 +55,6 @@
   text-overflow: ellipsis;
   margin: 0;
 }
+
 
 
