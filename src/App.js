@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import './App.css';
 
 import ChatListItem from './components/ChatListItem';
 import ChatIntro from './components/ChatIntro';
 import ChatWindow from './components/ChatWindow';
+import NewChat from './components/NewChat';
 
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -24,19 +25,30 @@ export default () => {
     avatar: 'https://www.w3schools.com/howto/img_avatar.png',
     name: 'Valdir Silva'
   });
+  const [showNewChat, setShowNewChat] = useState(false);
+  const handleNewChat = () => {
+    setShowNewChat(true);
+  }
 
   return (
     <div className="app-window">
       <div className="sidebar">
         
+        <NewChat 
+          chatList={chatList}
+          user={user}
+          show={showNewChat}
+          setShow={setShowNewChat}
+        />
+
         <header>
           <img src={user.avatar} alt="" className="header-avatar"/>
           <div className="header-buttons">
             <div className="header-btn">
               <DonutLargeIcon  style={{color:'#919191'}}/>
             </div>
-            <div className="header-btn">
-              <ChatIcon  style={{color:'#919191'}}/>
+            <div onClick={handleNewChat} className="header-btn">
+              <ChatIcon style={{color:'#919191'}}/>
             </div>
             <div className="header-btn">
               <MoreVertIcon  style={{color:'#919191'}}/>
