@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 import './ChatWindow.css';
 
@@ -14,6 +14,8 @@ import MessageItem from './MessageItem';
 
 export default ({user}) => {
 
+  const body = useRef();
+
   //Instruções para iniciar a utilizar o microfone no navegador
   let recognition = null;
   let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -27,9 +29,44 @@ export default ({user}) => {
   const [listening, setListening] = useState(false);
   const [list, setList] = useState([
     {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
     {author: 123, body: 'Texto da mensagem 2', date: '19:35'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'}
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
   ]);
+
+  //Mantendo a barra de rolagem "presa" no final da tela
+  useEffect(()=>{
+    if(body.current.scrollHeight > body.current.offsetHeight){
+      body.current.scrollTop = body.current.scrollHeight - body.current.offsetHeight;
+    }
+  }, [list]);
 
   const handleEmojiClick = (e, emojiObject) => {
     setText(text + emojiObject.emoji);    
@@ -87,7 +124,7 @@ export default ({user}) => {
 
       </div>
       
-      <div className="chat-window-body">
+      <div ref={body} className="chat-window-body">
         {list.map((item, key)=>(
           <MessageItem 
             key={key}
