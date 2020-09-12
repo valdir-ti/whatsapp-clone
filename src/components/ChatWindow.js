@@ -10,10 +10,26 @@ import CloseIcon from '@material-ui/icons/Close';
 import SendIcon from '@material-ui/icons/Send';
 import MicIcon from '@material-ui/icons/Mic';
 
-export default () => {
+import MessageItem from './MessageItem';
+
+export default ({user}) => {
+
+  //Instruções para iniciar a utilizar o microfone no navegador
+  let recognition = null;
+  let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  
+  if(SpeechRecognition !== undefined){
+    recognition = new SpeechRecognition();
+  }
 
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [text, setText] = useState();
+  const [listening, setListening] = useState(false);
+  const [list, setList] = useState([
+    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
+    {author: 123, body: 'Texto da mensagem 2', date: '19:35'},
+    {author: 124, body: 'Texto da mensagem 3', date: '19:55'}
+  ]);
 
   const handleEmojiClick = (e, emojiObject) => {
     setText(text + emojiObject.emoji);    
@@ -23,6 +39,28 @@ export default () => {
   }
   const handleCloseEmoji = () => {
     setEmojiOpen(false);
+  }
+
+  const handleSendClick = () => {
+
+  }
+
+  //Function que capta o que está sendo dito no microfone
+  const handleMicClick = () => {
+    if(recognition != null){
+
+      recognition.onstart = () => {
+        setListening(true);
+      }
+      recognition.onend = () => {
+        setListening(false);
+      }
+      recognition.onresult = (e) => {        
+        setText( e.results[0][0].transcript );
+      }
+
+      recognition.start();
+    }
   }
 
   return (
@@ -50,10 +88,16 @@ export default () => {
       </div>
       
       <div className="chat-window-body">
-
+        {list.map((item, key)=>(
+          <MessageItem 
+            key={key}
+            data={item}
+            user={user}
+          />
+        ))}
       </div>
 
-      <div className="chat-window-emoji-area" style={{height: emojiOpen? '200px': '0px'}}>
+      <div className="chat-window-emoji-area" style={{height: emojiOpen ? '200px': '0px'}}>
         <EmojiPicker 
           onEmojiClick={handleEmojiClick}
           disableSearchBar
@@ -91,10 +135,24 @@ export default () => {
 
         <div className="chat-window-footer-pos">
           
-          <div className="chat-window-header-btn">
-            <SendIcon fontSize="small" style={{color:'#919191'}}/>
-          </div>
+          {!text && 
+            <div 
+              className="chat-window-header-btn"
+              onClick={handleMicClick}
+            >
+              <MicIcon fontSize="small" style={{color: listening ? '#123ece' : '#919191'}}/>
+            </div>
+          }
 
+          {text &&
+            <div
+              className="chat-window-header-btn"
+              onClick={handleSendClick}
+            >
+              <SendIcon fontSize="small" style={{color:'#919191'}}/>
+            </div>
+          }
+          
         </div>
 
       </div>
