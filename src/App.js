@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import './App.css';
+import Api from './Api';
 
 import ChatListItem from './components/ChatListItem';
 import ChatIntro from './components/ChatIntro';
 import ChatWindow from './components/ChatWindow';
 import NewChat from './components/NewChat';
+import Login from './components/Login';
 
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -13,25 +15,40 @@ import SearchIcon from '@material-ui/icons/Search';
 
 export default () => {
 
-  const [chatList, setChatList] = useState([
-    {chatId: 1, title: 'Fulano de Tal', image: 'https://www.w3schools.com/howto/img_avatar.png'},
-    {chatId: 2, title: 'Fulano não Tal', image: 'https://www.w3schools.com/howto/img_avatar.png'},
-    {chatId: 3, title: 'Beltrano de Souza', image: 'https://www.w3schools.com/howto/img_avatar.png'},
-    {chatId: 4, title: 'Beltrano da Silva', image: 'https://www.w3schools.com/howto/img_avatar.png'},
-  ]);
+  const [chatList, setChatList] = useState([]);
   const [activeChat, setActiveChat] = useState({});
   const [user, setUser] = useState({
-    id: 123,
-    avatar: 'https://www.w3schools.com/howto/img_avatar.png',
-    name: 'Valdir Silva'
+    id:'lehW3E9yOjRbe4VLmYjVblLILs43',
+    name: 'Valdir Silva',
+    avatar: 'https://graph.facebook.com/2228251887209551/picture'
   });
   const [showNewChat, setShowNewChat] = useState(false);
   const handleNewChat = () => {
     setShowNewChat(true);
   }
 
+  const handleLoginData = async (u) => {
+    
+    let newUser = {
+      id: u.uid,
+      name: u.dispayName,
+      avatar: u.photoURL
+    }
+    
+    //Adicionando no Firebase
+    await Api.addUser(newUser);
+
+    setUser(newUser);
+  }
+
+  if(user === null){
+    return (<Login onReceive={handleLoginData} />);
+  }
+
   return (
     <div className="app-window">
+
+
       <div className="sidebar">
         
         <NewChat 
@@ -42,7 +59,7 @@ export default () => {
         />
 
         <header>
-          <img src={user.avatar} alt="" className="header-avatar"/>
+          <img src={user.avatar} alt={user.name} title={user.name} className="header-avatar"/>
           <div className="header-buttons">
             <div className="header-btn">
               <DonutLargeIcon  style={{color:'#919191'}}/>
