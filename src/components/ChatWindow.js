@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 import './ChatWindow.css';
+import Api from '../Api';
 
 import SearchIcon from '@material-ui/icons/Search';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
@@ -12,7 +13,7 @@ import MicIcon from '@material-ui/icons/Mic';
 
 import MessageItem from './MessageItem';
 
-export default ({user}) => {
+export default ({user, data}) => {
 
   const body = useRef();
 
@@ -27,39 +28,8 @@ export default ({user}) => {
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [text, setText] = useState();
   const [listening, setListening] = useState(false);
-  const [list, setList] = useState([
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 2', date: '19:35'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 124, body: 'Texto da mensagem 3', date: '19:55'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-    {author: 123, body: 'Texto da mensagem 1', date: '19:15'},
-  ]);
+  const [list, setList] = useState([]);
+  const [users, setUsers] = useState([]);
 
   //Mantendo a barra de rolagem "presa" no final da tela
   useEffect(()=>{
@@ -67,6 +37,15 @@ export default ({user}) => {
       body.current.scrollTop = body.current.scrollHeight - body.current.offsetHeight;
     }
   }, [list]);
+
+  useEffect(()=>{
+    
+    setList([]);
+
+    let unsub = Api.onChatContent(data.chatId, setList, setUsers);
+    return unsub;
+
+  }, [data.chatId]);
 
   const handleEmojiClick = (e, emojiObject) => {
     setText(text + emojiObject.emoji);    
@@ -78,8 +57,18 @@ export default ({user}) => {
     setEmojiOpen(false);
   }
 
-  const handleSendClick = () => {
+  const handleInputKeyUp = (e) => {
+    if(e.keyCode == 13){
+      handleSendClick();
+    }
+  }
 
+  const handleSendClick = () => {
+    if(text !== ''){
+      Api.sendMessage(data, user.id, 'text', text, users);
+      setText('');
+      setEmojiOpen(false);
+    }
   }
 
   //Function que capta o que está sendo dito no microfone
@@ -106,8 +95,8 @@ export default ({user}) => {
       <div className="chat-window-header">
         
         <div className="chat-window-header-info">
-          <img src="https://www.w3schools.com/howto/img_avatar.png" alt="" className="chat-window-header-info-avatar"/>
-          <div className="chat-window-header-name">Valdir Silva</div>
+          <img src={data.image} alt="" className="chat-window-header-info-avatar"/>
+          <div className="chat-window-header-name">{data.title}</div>
         </div>
 
         <div className="chat-window-header-buttons">
@@ -167,6 +156,7 @@ export default ({user}) => {
             placeholder="Digite uma mensagem"
             value={text}
             onChange={e=>setText(e.target.value)}
+            onKeyUp={handleInputKeyUp}
           />
         </div>
 
