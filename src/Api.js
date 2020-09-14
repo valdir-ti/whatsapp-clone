@@ -37,29 +37,37 @@ export default {
     return list;
   },
   addNewChat:async (user, user2) => {
-    
-    let newChat = await db.collection('chats').add({
-      messages: [],
-      users: [user.id, user2.id]
-    });
 
-    db.collection('users').doc(user.id).update({
-      chats: firebase.firestore.FieldValue.arrayUnion({
-        chatId: newChat.id,
-        title: user2.name,
-        image: user2.avatar,
-        with: user2.id
-      })
-    });
+    const chatsRef = db.collection('chats');
+    const results  = await chatsRef.where('users', 'array-contains-any', [user2.id, user.id]).get();
+   
+    console.log(results.docs.length)
 
-    db.collection('users').doc(user2.id).update({
-      chats: firebase.firestore.FieldValue.arrayUnion({
-        chatId: newChat.id,
-        title: user.name,
-        image: user.avatar,
-        with: user.id
-      })
-    });
+    if(results.docs.length === 0){
+      let newChat = await db.collection('chats').add({
+        messages: [],
+        users: [user.id, user2.id]
+      });
+  
+      db.collection('users').doc(user.id).update({
+        chats: firebase.firestore.FieldValue.arrayUnion({
+          chatId: newChat.id,
+          title: user2.name,
+          image: user2.avatar,
+          with: user2.id
+        })
+      });
+  
+      db.collection('users').doc(user2.id).update({
+        chats: firebase.firestore.FieldValue.arrayUnion({
+          chatId: newChat.id,
+          title: user.name,
+          image: user.avatar,
+          with: user.id
+        })
+      });
+    }
+
   },
   onChatList: (userId, setChatList) => {
     return db.collection('users').doc(userId).onSnapshot((doc)=>{
