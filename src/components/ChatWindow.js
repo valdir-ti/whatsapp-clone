@@ -25,11 +25,11 @@ export default ({user, data}) => {
     recognition = new SpeechRecognition();
   }
 
-  const [emojiOpen, setEmojiOpen] = useState(false);
-  const [text, setText] = useState();
-  const [listening, setListening] = useState(false);
-  const [list, setList] = useState([]);
+  const [text, setText]   = useState('');
+  const [list, setList]   = useState([]);
   const [users, setUsers] = useState([]);
+  const [listening, setListening] = useState(false);
+  const [emojiOpen, setEmojiOpen] = useState(false);
 
   //Mantendo a barra de rolagem "presa" no final da tela
   useEffect(()=>{

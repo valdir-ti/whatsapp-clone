@@ -16,8 +16,8 @@ import SearchIcon from '@material-ui/icons/Search';
 export default () => {
 
   const [chatList, setChatList] = useState([]);
-  const [activeChat, setActiveChat] = useState({});
-  const [user, setUser] = useState(null);
+  const [user, setUser]         = useState(null);
+  const [activeChat, setActiveChat]   = useState({});
   const [showNewChat, setShowNewChat] = useState(false);
 
   useEffect(()=>{
@@ -32,10 +32,9 @@ export default () => {
   }
 
   const handleLoginData = async (u) => {
-    
     let newUser = {
       id: u.uid,
-      name: u.dispayName,
+      name: u.displayName,
       avatar: u.photoURL
     }
     
@@ -51,7 +50,6 @@ export default () => {
 
   return (
     <div className="app-window">
-
 
       <div className="sidebar">
         
